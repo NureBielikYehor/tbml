@@ -1,0 +1,27 @@
+{
+  "name": "tbml",
+  "version": "0.1.0",
+  "description": "Crowdfunding with pre-launch ML scoring and contributor-governed milestones",
+  "type": "module",
+  "engines": { "node": ">=24" },
+  "scripts": {
+    "compile": "node scripts/compile.mjs",
+    "test": "npm run compile && node --test tests/*.test.mjs",
+    "test:integration": "node --test tests/api.integration.mjs",
+    "chain": "hardhat node --hostname 127.0.0.1",
+    "deploy": "node scripts/deploy.mjs",
+    "demo": "node scripts/demo.mjs",
+    "start": "node --env-file-if-exists=.env server/index.mjs",
+    "dev": "node --env-file-if-exists=.env scripts/dev.mjs"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "5.6.1",
+    "ethers": "6.17.0",
+    "express": "5.1.0"
+  },
+  "devDependencies": {
+    "hardhat": "3.21.2",
+    "solc": "0.8.38"
+  },
+  "private": true
+}

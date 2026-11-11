@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>StepFund — краудфандинг з прогнозом</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="/">StepFund<span>Fund ideas. Release by milestone.</span></a>
+    <nav><a href="#campaigns">Кампанії</a><a href="#how">Як це працює</a></nav>
+    <div class="account"><span class="network" id="network">Підключення…</span><select id="account" aria-label="Навчальний акаунт"></select></div>
+  </header>
+  <main>
+    <section class="hero"><div><p class="eyebrow">ІДЕЇ З ПРОЗОРИМИ ПРАВИЛАМИ</p>
+      <h1>Підтримуйте ідеї.<br><span>Контролюйте результат.</span></h1>
+      <p class="lead">Побачте прогноз успіху до внеску. Голосуйте за виконані етапи. Кошти надходять автору лише після вашого рішення.</p>
+      <button id="open-create" class="primary">Створити кампанію <span>↗</span></button>
+    </div><aside class="hero-aside"><p class="eyebrow">КОШТИ РУХАЮТЬСЯ ЗА ВАШИМ РІШЕННЯМ</p>
+      <div class="journey"><div><b>01</b><span>Прогноз моделі<small>За описом і параметрами кампанії</small></span></div>
+      <div><b>02</b><span>Спільне фінансування<small>Внески зберігає смартконтракт</small></span></div>
+      <div><b>03</b><span>Етап → голосування → транш<small>Відхилений етап повертає залишок</small></span></div></div>
+      <div class="model-status" id="model-status">Завантаження моделі…</div>
+    </aside></section>
+    <section id="campaigns"><div class="section-title"><div><p class="eyebrow">ВІД ІДЕЇ ДО РЕЗУЛЬТАТУ</p><h2>Кампанії</h2></div><button class="quiet" id="refresh">Оновити ↻</button></div>
+      <div class="filters" id="filters"><button class="active" data-filter="all">Усі</button><button data-filter="1">Збір коштів</button><button data-filter="active">Виконання</button><button data-filter="5">Повернення</button><button data-filter="4">Завершені</button></div>
+      <div id="campaign-list" class="grid"><p class="empty">Завантаження кампаній…</p></div>
+    </section>
+    <section id="how" class="explanation"><h2>Рішення залишається за вкладниками.</h2><p>Оцінка моделі описує шанси зібрати цільову суму. Вона не підтверджує виконання обіцянок автора. Кожен етап має окремий звіт і голосування; невиплачені кошти можна повернути після відхилення етапу або пропуску строку звіту.</p></section>
+    <footer><span>StepFund · Бєлік Єгор та Глоба Максим · ПЗПІ-23-6</span><span>Навчальна локальна мережа · тестовий ETH</span></footer>
+  </main>
+  <dialog id="create-dialog"><div class="dialog-head"><h2>Нова кампанія</h2><button class="close" data-close="create-dialog" aria-label="Закрити">×</button></div>
+    <form id="create-form"><label>Назва<input name="title" required minlength="3" maxlength="120" placeholder="Наприклад, майстерня друкованих артбуків"></label>
+      <label>Опис<textarea name="description" required minlength="30" maxlength="20000" rows="5" placeholder="Що ви створюєте, для кого і як використаєте кошти?"></textarea></label>
+      <p class="hint">Модель навчена переважно на англомовних коротких описах Kickstarter. Для оцінки використовуйте англомовний опис.</p>
+      <div class="form-row"><label>Ціль збору, тестовий ETH<input name="goalEth" type="number" min="0.000001" step="any" value="0.01" required></label><label>Тривалість, днів<input name="durationDays" type="number" min="1" max="90" value="30" required></label></div>
+      <div class="form-row"><label>Бюджет проєкту для ML<input name="budgetGoal" type="number" min="1" max="1000000000000" value="10000" required></label><label>Валюта бюджету<select name="currency" id="currency"><option>USD</option></select></label></div>
+      <p class="hint">Історична модель працює з бюджетами Kickstarter у фіатних валютах. Бюджет для ML задається окремо від тестового ETH; автоматичного курсу обміну немає.</p>
+      <div class="form-row"><label>Категорія<select name="category" id="category"></select></label><label>Країна<select name="country" id="country"><option>US</option></select></label></div>
+      <fieldset><legend>Етапи фінансування</legend><label>Перший етап<input name="firstTitle" value="Прототип та перевірка ідеї" required minlength="2"></label>
+        <label>Частка першого траншу, %<input name="firstPercent" type="number" min="1" max="99" step="1" value="40" required></label>
+        <label>Другий етап<input name="secondTitle" value="Виготовлення та передача результату" required minlength="2"></label><p class="hint">Другий транш отримує решту бюджету. На голосування — 1 година, на подання звіту — 7 днів.</p></fieldset>
+      <button class="primary" type="submit">Зберегти та створити в блокчейні ↗</button>
+    </form>
+  </dialog>
+  <dialog id="detail-dialog"><div class="dialog-head"><span class="eyebrow">КАМПАНІЯ ТА ЇЇ ЕТАПИ</span><button class="close" data-close="detail-dialog" aria-label="Закрити">×</button></div><div id="detail"></div></dialog>
+  <div id="toast" role="status" aria-live="polite" hidden></div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+# IDE and operating system
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Node
+node_modules/
+dist/
+coverage/
+artifacts/
+cache/
+
+# Python and notebooks
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.tools/
+.ipynb_checkpoints/
+
+# Reproducible local data and trained models
+data/raw/*
+!data/raw/.gitkeep
+data/processed/
+data/local/
+models/
+*.joblib
+*.pkl
+*.part
+
+# Logs and local databases
+*.log
+*.sqlite3
+/ЛР 1 - Аналіз і проєктування.docx
+/ЛР 2 - Блокчейн-частина.docx
+/ЛР 3 - Машинне навчання та інтеграція.docx
+/ЛР 4 - Експерименти та аналіз результатів.docx
+
+# Temporary document extraction and rendering
+tmp/
+
+# Local documentation, report outputs and course attachments
+/AGENTS.md
+/docs/
+/reports/
+/Теми лабораторних робіт.xlsx
+/scripts/document_contracts.mjs
+/scripts/export_assignment_sources.py
+/scripts/render_diagrams.py
