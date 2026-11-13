@@ -1,0 +1,33 @@
+name: Blockchain checks
+on: [push, pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  contracts:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.22.0'
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: requirements-security.lock
+      - run: npm ci
+      - run: python scripts/setup_blockchain_tools.py
+      - run: python -m pip install -r requirements-security.lock
+      - run: npm test
+      - run: npm run test:contracts
+      - run: npm run coverage:contracts
+      - run: python scripts/security.py
+      - run: npm run lab2:demo
+      - run: npm run lab2:integrity
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: blockchain-results
+          path: reports/lab2/

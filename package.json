@@ -3,7 +3,9 @@
   "version": "0.1.0",
   "description": "Crowdfunding with pre-launch ML scoring and contributor-governed milestones",
   "type": "module",
-  "engines": { "node": ">=24" },
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "compile": "node scripts/compile.mjs",
     "test": "npm run compile && node --test tests/*.test.mjs",
@@ -12,7 +14,27 @@
     "deploy": "node scripts/deploy.mjs",
     "demo": "node scripts/demo.mjs",
     "start": "node --env-file-if-exists=.env server/index.mjs",
-    "dev": "node --env-file-if-exists=.env scripts/dev.mjs"
+    "dev": "node --env-file-if-exists=.env scripts/dev.mjs",
+    "tools:blockchain": "python3 scripts/setup_blockchain_tools.py",
+    "test:contracts": ".tools/bin/forge test --summary",
+    "coverage:contracts": "node scripts/coverage.mjs",
+    "security": ".venv/bin/python scripts/security.py",
+    "lab2:deploy": "node scripts/lab2-deploy.mjs",
+    "lab2:seed": "node scripts/lab2-seed.mjs",
+    "lab2:oracle": "node scripts/lab2-oracle.mjs",
+    "lab2:demo": "node scripts/lab2-scenario.mjs",
+    "lab2:integrity": "node scripts/lab2-integrity.mjs",
+    "lab2:gas": "node scripts/lab2-gas.mjs",
+    "lab2:optimize": "node scripts/lab2-optimize.mjs",
+    "lab2:charts": ".venv/bin/python scripts/lab2-charts.py",
+    "lab2:wallets": "node scripts/lab2-wallets.mjs",
+    "lab2:verify": "node --env-file-if-exists=.env.sepolia scripts/lab2-verify.mjs",
+    "lab2:deploy:sepolia": "node --env-file=.env.sepolia scripts/lab2-deploy.mjs",
+    "lab2:seed:sepolia": "node --env-file=.env.sepolia scripts/lab2-seed.mjs",
+    "lab2:oracle:sepolia": "node --env-file=.env.sepolia scripts/lab2-oracle.mjs",
+    "lab2:demo:sepolia": "node --env-file=.env.sepolia scripts/lab2-scenario.mjs --deployed",
+    "lab2:fund:sepolia": "node --env-file=.env.sepolia scripts/lab2-fund.mjs",
+    "lab2:audit:sepolia": "node --env-file=.env.sepolia scripts/lab2-audit-sepolia.mjs"
   },
   "dependencies": {
     "@openzeppelin/contracts": "5.6.1",

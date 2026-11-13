@@ -1,24 +1,48 @@
 import fs from "node:fs";
+import path from "node:path";
+import { DatabaseSync } from "node:sqlite";
 import { id, parseEther } from "ethers";
 
 const folder = "data/local/content";
+let db;
+function database() {
+  if (!db) {
+    const filename = process.env.CONTENT_DB || "data/local/content.sqlite3";
+    fs.mkdirSync(path.dirname(filename), { recursive: true });
+    db = new DatabaseSync(filename);
+    db.exec("PRAGMA journal_mode=WAL; CREATE TABLE IF NOT EXISTS content (hash TEXT PRIMARY KEY, body TEXT NOT NULL)");
+  }
+  return db;
+}
+export function contentDatabasePath() { return process.env.CONTENT_DB || "data/local/content.sqlite3"; }
+
 export function canonical(value) {
   if (Array.isArray(value)) return `[${value.map(canonical).join(",")}]`;
   if (value && typeof value === "object") return `{${Object.keys(value).sort().map(key => `${JSON.stringify(key)}:${canonical(value[key])}`).join(",")}}`;
   return JSON.stringify(value);
 }
 export function saveContent(value) {
-  const text = canonical(value), hash = id(text);
-  fs.mkdirSync(folder, { recursive: true });
-  fs.writeFileSync(`${folder}/${hash.slice(2)}.json`, text);
+  const body = canonical(value), hash = id(body);
+  database().prepare("INSERT OR IGNORE INTO content(hash, body) VALUES (?, ?)").run(hash.toLowerCase(), body);
   return hash;
 }
 export function readContent(hash) {
   if (!/^0x[0-9a-fA-F]{64}$/.test(hash)) throw new Error("Invalid content hash");
-  const value = JSON.parse(fs.readFileSync(`${folder}/${hash.slice(2).toLowerCase()}.json`, "utf8"));
-  if (id(canonical(value)).toLowerCase() !== hash.toLowerCase()) throw new Error("Content integrity check failed");
-  return value;
+  const normalized = hash.toLowerCase();
+  let row = database().prepare("SELECT body FROM content WHERE hash = ?").get(normalized);
+  // Import existing local demo files lazily, checking integrity before persisting them.
+  if (!row) {
+    const filename = `${folder}/${normalized.slice(2)}.json`;
+    if (!fs.existsSync(filename)) throw new Error("Content not found");
+    const body = fs.readFileSync(filename, "utf8");
+    if (id(body).toLowerCase() !== normalized) throw new Error("Content integrity check failed");
+    database().prepare("INSERT INTO content(hash, body) VALUES (?, ?)").run(normalized, body);
+    row = { body };
+  }
+  if (id(row.body).toLowerCase() !== normalized) throw new Error("Content integrity check failed");
+  return JSON.parse(row.body);
 }
+
 function text(value, min, max) {
   if (typeof value !== "string" || value.trim().length < min || value.trim().length > max) throw new Error("Invalid text length");
   return value.trim();

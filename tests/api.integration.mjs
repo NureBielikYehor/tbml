@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import fs from "node:fs";
+import { DatabaseSync } from "node:sqlite";
+import { contentDatabasePath } from "../server/content.mjs";
 import { Contract } from "ethers";
 import { provider } from "../server/chain.mjs";
 
@@ -33,14 +34,14 @@ test("foreign origins, non-JSON RPC bodies, oversized inputs and invalid amounts
 test("content corruption is detected instead of serving substituted metadata", async () => {
   const response = await post("/api/metadata", input); assert.equal(response.status, 201);
   const saved = await response.json();
-  const location = `data/local/content/${saved.hash.slice(2)}.json`;
-  const original = fs.readFileSync(location);
+  const db = new DatabaseSync(contentDatabasePath());
+  const original = db.prepare("SELECT body FROM content WHERE hash = ?").get(saved.hash).body;
   try {
-    fs.writeFileSync(location, "{}");
+    db.prepare("UPDATE content SET body = ? WHERE hash = ?").run("{}", saved.hash);
     const result = await fetch(base + "/api/content/" + saved.hash);
     assert.equal(result.status, 400);
     assert.match((await result.json()).error, /integrity/);
-  } finally { fs.writeFileSync(location, original); }
+  } finally { db.prepare("UPDATE content SET body = ? WHERE hash = ?").run(original, saved.hash); db.close(); }
   assert.equal((await fetch(base + "/api/content/" + saved.hash)).status, 200);
 });
 
